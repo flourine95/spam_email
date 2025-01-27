@@ -1,34 +1,49 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import classification_report, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.tree import DecisionTreeClassifier
+
 # Load dataset Spambase
 data = pd.read_csv("spambase/spambase.data", header=None)
+# Định nghĩa tên cột cho các thuộc tính
 column_names = [
-    f'word_freq_{i}' for i in range(48)
-] + [
-    f'char_freq_{i}' for i in range(6)
-] + [
-    'capital_run_length_average',
-    'capital_run_length_longest',
-    'capital_run_length_total',
-    'spam'
+    'word_freq_make', 'word_freq_address', 'word_freq_all', 'word_freq_3d', 'word_freq_our',
+    'word_freq_over', 'word_freq_remove', 'word_freq_internet', 'word_freq_order', 'word_freq_mail',
+    'word_freq_receive', 'word_freq_will', 'word_freq_people', 'word_freq_report', 'word_freq_addresses',
+    'word_freq_free', 'word_freq_business', 'word_freq_email', 'word_freq_you', 'word_freq_credit',
+    'word_freq_your', 'word_freq_font', 'word_freq_000', 'word_freq_money', 'word_freq_hp',
+    'word_freq_hpl', 'word_freq_george', 'word_freq_650', 'word_freq_lab', 'word_freq_labs',
+    'word_freq_telnet', 'word_freq_857', 'word_freq_data', 'word_freq_415', 'word_freq_85',
+    'word_freq_technology', 'word_freq_1999', 'word_freq_parts', 'word_freq_pm', 'word_freq_direct',
+    'word_freq_cs', 'word_freq_meeting', 'word_freq_original', 'word_freq_project', 'word_freq_re',
+    'word_freq_edu', 'word_freq_table', 'word_freq_conference',
+    'char_freq_;', 'char_freq_(', 'char_freq_[', 'char_freq_!', 'char_freq_$', 'char_freq_#',
+    'capital_run_length_average', 'capital_run_length_longest', 'capital_run_length_total', 'spam'
 ]
-data.columns = column_names
-print(data.info())       # Loại dữ liệu, giá trị null
-print(data.describe())   # Thống kê cơ bản
-print(data.head())       # Xem trước vài hàng
-print(data['spam'].value_counts(normalize=True))
 
+data.columns = column_names
+print(data.info())  # Loại dữ liệu, giá trị null
+print(data.describe())  # Thống kê cơ bản
+print(data.head())  # Xem trước vài hàng
+print(data['spam'].value_counts(normalize=True))
+plt.figure(figsize=(6, 3))
+
+plt.hist(data['word_freq_free'], bins=30, color='blue', alpha=0.7)
+plt.title('Distribution of word_freq_free')
+plt.xlabel('Frequency of "word_freq_free"')
+plt.ylabel('Count')
+
+plt.tight_layout()
+plt.show()
 
 # Chia thành feature và label
 X = data.iloc[:, :-1]  # Các cột đặc trưng (từ cột 0 đến cột cuối trừ 1)
-y = data.iloc[:, -1]   # Nhãn (cột cuối cùng)
+y = data.iloc[:, -1]  # Nhãn (cột cuối cùng)
 
 # Chia dữ liệu thành tập train và test
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
@@ -169,8 +184,11 @@ def create_radar_chart(models, metrics, title):
     plt.legend(loc='upper right')
     plt.show()
 
+
 # Gọi hàm để tạo biểu đồ radar
 create_radar_chart(models, [accuracy_nb, precision_nb, recall_nb, f1_nb], 'Model Performance Comparison')
+
+
 # Tạo biểu đồ nhóm
 def create_grouped_bar_chart(models, accuracies, precisions, recalls, f1_scores):
     x = np.arange(len(models))  # Vị trí của các mô hình
@@ -193,6 +211,7 @@ def create_grouped_bar_chart(models, accuracies, precisions, recalls, f1_scores)
 
     plt.tight_layout()
     plt.show()
+
 
 # Gọi hàm để tạo biểu đồ nhóm
 create_grouped_bar_chart(models, accuracies, precisions, recalls, f1_scores)
